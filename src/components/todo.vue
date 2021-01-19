@@ -1,28 +1,23 @@
 <template>
   <div class="container">
     <div class="top">
+     <div>
+       {{errorMessage}}
+     </div>
       <label class="input-label">
-        <input type="text" placeholder="текстовое поле">
+        <input type="text" v-model="message" placeholder="текстовое поле" required>
       </label>
-      <select name="type" id="">
-        <option value="urgently">срочно</option>
-        <option value="notUrgent">не срочно</option>
-        <option value="defer">отложить</option>
+      <select name="priority" v-model="priority">
+        <option v-for="item in items" :value="item.value" :key="item.text" > {{item.text}}</option>
       </select>
     </div>
-    <button>Добавить задачу</button>
-    <ul class="task-list">
-      <li class="task-item">
+    <button v-on:click="addTask">Добавить задачу</button>
+    <ul id="task-list" class="task-list" >
+      <li class="task-item" v-for="taskItem in taskItems" :key="taskItem.name" :priority="taskItem.priorityItem">
         <label>
           <input type="checkbox">
         </label>
-        <p>text</p>
-      </li>
-      <li class="task-item">
-        <label>
-          <input type="checkbox">
-        </label>
-        <p>text</p>
+        <p>{{taskItem.name}}</p>
       </li>
     </ul>
     <div class="bottom">
@@ -31,22 +26,49 @@
         <option value="done">Сделано</option>
         <option value="notDone">Не сделано</option>
       </select>
-      <select name="filter-type">
-        <option value="urgently">срочно</option>
-        <option value="notUrgent">не срочно</option>
-        <option value="defer">отложить</option>
+      <select name="filter-priority">
+        <option v-for="item in items" :value="item.value" :key="item.text"> {{item.text}}</option>
       </select>
     </div>
   </div>
 </template>
 
 <script>
+
+
 export default {
-  name: 'todo'
+  name: 'todo',
+  data() {
+    return {
+      items: [
+        {value: 'urgently', text: 'срочно'},
+        {value: 'notUrgent', text: 'не срочно'},
+        {value: 'defer', text: 'отложить'}
+      ],
+      message: '',
+      priority: '',
+      errorMessage: '',
+      taskItems:[]
+    }
+  },
+  methods:{
+    addTask: function (){
+      if(this.message && this.priority){
+        this.taskItems.push({
+          name: this.message,
+          priorityItem: this.priority
+        })
+        this.errorMessage = ''
+      } else {
+        this.errorMessage = 'Заполните поля'
+      }
+    }
+  }
 }
+
 </script>
 
-<style scoped>
+<style>
   .container{
     margin-left: auto;
     margin-right: auto;
